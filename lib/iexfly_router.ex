@@ -33,6 +33,12 @@ defmodule Iexfly.Routing do
     conn |> send_resp(200, "You requested cat #{cat_id}")
   end
 
+  def route("GET", ["user", user_id], conn) do
+    IO.puts("GET /user/#{user_id}")
+    page_contents = EEx.eval_file("lib/templates/show_user.eex", [user_id: user_id])
+    conn |> Plug.Conn.put_resp_content_type("text/html") |> Plug.Conn.send_resp(200, page_contents)
+  end
+
   def route(method, path, conn) do
     IO.puts("#{String.upcase(method)} /#{path}")
     conn |> send_resp(404, "Not found.")
