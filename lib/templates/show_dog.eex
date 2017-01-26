@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <h1>Dog Information Page</h1>
+    <p>Dog's id <%= dog_id %>.</p>
+    <p>Also, 5 * 3 = <%= 5 * 3 %></p>
+    <%= if dog_id == "777" do %>
+      <%# just comment %>
+      Dog 777 is really cool!
+    <% end %>
+  </body>
+</html>
