@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>getpost cat :D</title>
+  </head>
+  <body>
+    <h1>Post cat Page</h1>
+    <p>Cat's id <%= cat_id %>.</p>
+    <%= if cat_id == "777" do %>
+      <%# just comment %>
+      Cat 777 is really cool!
+    <% end %>
+    <form action="" method="POST">
+      <input type="text" name="name" value="" placeholder="name"><br>
+      <input type="text" name="old" value="1" placeholder="old"><br>
+      <button type="submit">Send</button>
+    </form>
+  </body>
+</html>
