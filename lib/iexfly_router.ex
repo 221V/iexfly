@@ -24,10 +24,32 @@ defmodule Iexfly.Routing do
     IO.puts("GET /")
     conn |> send_resp(200, "Hello, world!")
   end
+  
+  #get cookie
+  #add custom header
+  def route("GET", ["getcookie"], conn) do
+    IO.puts("GET /getcookie")
+    conn = Plug.Conn.fetch_cookies(conn)
+    IO.inspect conn.cookies["test9"]
+    IO.inspect conn.cookies["test91"]
+    IO.inspect conn.cookies["test92"]
+    
+    conn = Plug.Conn.put_resp_header(conn, "x-header", "set")
+    
+    conn |> send_resp(200, "Hello, cookie!")
+  end
 
   #getting path's parts to variables
+  #set cookie
   def route("GET", ["hello", thing], conn) do
     IO.puts("GET /hello/#{thing}")
+    
+    conn = Plug.Conn.fetch_query_params(conn)
+    
+    conn = put_resp_cookie(conn, "test9", "тестова кука", max_age: 60*60*24*365)
+    conn = put_resp_cookie(conn, "test91", "тестова кука2", max_age: 60*60*24*365, path: "/", http_only: false)
+    #IO.inspect conn
+    
     conn |> send_resp(200, "Hello, #{thing}!")
   end
 
@@ -40,12 +62,15 @@ defmodule Iexfly.Routing do
     #"test1=777&test2=%D1%82%D0%B5%D1%81%D1%82"
     #IO.inspect URI.decode_query(conn.query_string)
     #%{"test1" => "777", "test2" => "тест"}
-    get_params = URI.decode_query(conn.query_string)
+    #get_params = URI.decode_query(conn.query_string)
+    conn = Plug.Conn.fetch_query_params(conn)
+    get_params = conn.query_params
     IO.inspect get_params["test1"]
     #"777"
     IO.inspect get_params["test3"]
     #nil
-    conn |> send_resp(200, "You requested cat #{cat_id},<br>#{get_params["test1"]}")
+    conn = Plug.Conn.put_resp_content_type(conn, "text/html")
+    conn |> send_resp(200, "You requested cat #{cat_id},<br>#{get_params["test1"]}<br>#{get_params["test2"]}")
   end
 
   #get post form
@@ -67,16 +92,16 @@ defmodule Iexfly.Routing do
     #IO.inspect param
     
     #IO.inspect conn.adapter
-    {_, {
-    _, _, _, _, _, _,
-    _, _, _, _, _,
-    _, _, _,
-    _, _,
-    _, _, _, _,
-    _, post_params, _, _, _, _, _, _}} = conn.adapter
+    #{_, {
+    #_, _, _, _, _, _,
+    #_, _, _, _, _,
+    #_, _, _,
+    #_, _,
+    #_, _, _, _,
+    #_, post_params, _, _, _, _, _, _}} = conn.adapter
     #IO.inspect post_params
     #"name=nja&old=7"
-    post_params = URI.decode_query(post_params)
+    #post_params = URI.decode_query(post_params)
     #IO.inspect post_params
     #%{"name" => "nja", "old" => "7"}
     
@@ -85,6 +110,11 @@ defmodule Iexfly.Routing do
     #"777"
     #IO.inspect get_params["test3"]
     #nil
+    
+    conn = Plug.Conn.fetch_query_params(conn)
+    {:ok, post_params, conn} = Plug.Conn.read_body(conn, length: 1_000_000)
+    post_params = URI.decode_query(post_params)
+    
     conn |> Plug.Conn.put_resp_content_type("text/html") |> Plug.Conn.send_resp(200, "You requested postcat #{cat_id},<br>#{get_params["test1"]}<br>You sent post:<br>name: #{post_params["name"]}<br>old: #{post_params["old"]}")
   end
 
