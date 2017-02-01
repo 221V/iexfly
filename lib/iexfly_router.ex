@@ -117,6 +117,35 @@ defmodule Iexfly.Routing do
     conn |> Plug.Conn.put_resp_content_type("text/html") |> Plug.Conn.send_resp(200, page_contents)
   end
 
+  #vk api request demo (request api, json)
+  def route("GET", ["vkapi"], conn) do
+    IO.puts("GET /vkapi")
+    
+    #better add ssl & inets to mix applications list
+    :ssl.start()
+    :inets.start()
+    #{:ok,{status,headers,content}} = :httpc.request 'http://httpbin.org/ip'
+    {:ok,{_,_,content}} = :httpc.request(:get, {'https://api.vk.com/method/users.get?user_ids=1&fields=photo_big&name_case=Nom&version=5.30', 
+    [{'User-Agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101 Firefox/45.0'}, {'Accept-language', 'ru,ru_RU\r\n'}, {'Cookie', 'remixlang=0\r\n'}]}, [], [])
+    :ssl.stop()
+    :inets.stop()
+    
+    data = Jazz.decode!(Kernel.to_string(content))
+    #IO.inspect data
+    #IO.inspect data["response"]
+    [page_contents|_] = data["response"]
+    #IO.inspect page_contents
+    #IO.inspect page_contents["first_name"]
+    #IO.inspect :io.format("~s~n",[page_contents["first_name"]])
+    
+    name1 = :unicode.characters_to_binary(:unicode.characters_to_list(page_contents["first_name"]), :utf8, :latin1)
+    name2 = :unicode.characters_to_binary(:unicode.characters_to_list(page_contents["last_name"]), :utf8, :latin1)
+    
+    page_contents = Integer.to_string(page_contents["uid"]) <> ": " <> name1 <> " " <> name2 <> "<br><img src=\""<> page_contents["photo_big"] <> "\"><br>"
+    
+    conn |> Plug.Conn.put_resp_content_type("text/html") |> send_resp(200, page_contents)
+  end
+
   def route(method, path, conn) do
     IO.puts("#{String.upcase(method)} /#{path}")
     #IO.inspect(method)

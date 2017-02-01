@@ -30,6 +30,7 @@ defmodule Iexfly.Mixfile do
     [{:cowboy, "~> 1.0.0"},
     {:plug, "~> 1.0"},
     {:ecto, "~> 1.0"},
-    {:socket, "~> 0.3"}]
+    {:socket, "~> 0.3"},
+    {:jazz, "~> 0.2.1"}]
   end
 end
