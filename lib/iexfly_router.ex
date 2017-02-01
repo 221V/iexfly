@@ -58,11 +58,6 @@ defmodule Iexfly.Routing do
   # /cat/cat2?test1=777&test2=тест
   def route("GET", ["cat", cat_id], conn) do
     IO.puts("GET /cat/#{cat_id}")
-    #IO.inspect conn.query_string
-    #"test1=777&test2=%D1%82%D0%B5%D1%81%D1%82"
-    #IO.inspect URI.decode_query(conn.query_string)
-    #%{"test1" => "777", "test2" => "тест"}
-    #get_params = URI.decode_query(conn.query_string)
     conn = Plug.Conn.fetch_query_params(conn)
     get_params = conn.query_params
     IO.inspect get_params["test1"]
@@ -84,34 +79,14 @@ defmodule Iexfly.Routing do
 
   #get&post params demo
   def route("POST", ["postcat", cat_id], conn) do
-    IO.puts("POST /postcat/#{cat_id}")
-    #IO.inspect conn
-    
-    #{method, conn} = :cowboy_req.method(conn)
-    #{param, conn} = :cowboy_req.binding(:filename, conn)
-    #IO.inspect param
-    
-    #IO.inspect conn.adapter
-    #{_, {
-    #_, _, _, _, _, _,
-    #_, _, _, _, _,
-    #_, _, _,
-    #_, _,
-    #_, _, _, _,
-    #_, post_params, _, _, _, _, _, _}} = conn.adapter
-    #IO.inspect post_params
-    #"name=nja&old=7"
-    #post_params = URI.decode_query(post_params)
-    #IO.inspect post_params
-    #%{"name" => "nja", "old" => "7"}
-    
-    get_params = URI.decode_query(conn.query_string)
+    IO.puts("POST /postcat/#{cat_id}")    
+    conn = Plug.Conn.fetch_query_params(conn)
+    get_params = conn.query_params
     #IO.inspect get_params["test1"]
     #"777"
     #IO.inspect get_params["test3"]
     #nil
     
-    conn = Plug.Conn.fetch_query_params(conn)
     {:ok, post_params, conn} = Plug.Conn.read_body(conn, length: 1_000_000)
     post_params = URI.decode_query(post_params)
     
