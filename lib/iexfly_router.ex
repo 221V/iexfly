@@ -132,12 +132,21 @@ defmodule Iexfly.Routing do
     page_contents = template_show_dog(dog_id)
     conn |> Plug.Conn.put_resp_content_type("text/html") |> Plug.Conn.send_resp(200, page_contents)
   end
+  
+  #template including template
+  EEx.function_from_file :defp, :template_twice_1st, "lib/templates/twice_1st.eex", [:first_id, :second_id, :second_part]
+  EEx.function_from_file :defp, :template_twice_2nd, "lib/templates/twice_2nd.eex", [:second_value]
+  def route("GET", ["twice", second_id], conn) do
+    IO.puts("GET /twice/#{second_id}")
+    page_contents = template_twice_1st("test1", second_id, template_twice_2nd("test2 777"))
+    conn |> Plug.Conn.put_resp_content_type("text/html") |> Plug.Conn.send_resp(200, page_contents)
+  end
 
   def route(method, path, conn) do
     IO.puts("#{String.upcase(method)} /#{path}")
-    IO.inspect(method)
-    IO.inspect(path)
-    IO.inspect(conn)
+    #IO.inspect(method)
+    #IO.inspect(path)
+    #IO.inspect(conn)
     conn |> send_resp(404, "Not found.")
   end
   

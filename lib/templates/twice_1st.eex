@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <h1>Template including template test</h1>
+    <p>
+      Template 1 params are : 
+      <br><%= first_id %>
+      <br><%= second_id %>
+    </p>
+    <p>
+      Template 2 :
+      <br><%= second_part %>
+    </p>
+  </body>
+</html>
