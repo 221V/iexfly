@@ -117,6 +117,25 @@ defmodule Iexfly.Routing do
     conn |> Plug.Conn.put_resp_content_type("text/html") |> Plug.Conn.send_resp(200, page_contents)
   end
 
+  #dtl template including template (erlydtl)
+  #:erlydtl.compile_file('lib/templates/dtl_1st.dtl', :dtl_1st, [{:out_dir, ['../deps/erlydtl/ebin']}])
+  :erlydtl.compile('lib/templates/dtl_1st.dtl', :dtl_1st, [])
+  :erlydtl.compile('lib/templates/dtl_2nd.dtl', :dtl_2nd, [{:auto_escape, :false}])
+  
+  def route("GET", ["dtl"], conn) do
+    IO.puts("GET /dtl")
+    
+    {:ok, name2} = :dtl_2nd.render([{:name0, "J.В."}])
+    {:ok, page_contents0} = :dtl_1st.render([
+      {:name, 'Johnny Василіч'},
+      {:friends, ["Frankie Lee", "Judas Priest"]},
+      {:primes, [1, 2, '3', "5", <<"777">>]},
+      {:name2, Enum.join(name2)}
+    ])
+    page_contents = Enum.join(page_contents0)
+    conn |> Plug.Conn.put_resp_content_type("text/html") |> Plug.Conn.send_resp(200, page_contents)
+  end
+
   #vk api request demo (request api, json)
   def route("GET", ["vkapi"], conn) do
     IO.puts("GET /vkapi")

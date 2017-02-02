@@ -31,6 +31,9 @@ defmodule Iexfly.Mixfile do
     {:plug, "~> 1.0"},
     {:ecto, "~> 1.0"},
     {:socket, "~> 0.3"},
-    {:jazz, "~> 0.2.1"}]
+    {:jazz, "~> 0.2.1"},
+    #{:erlydtl, github: "erlydtl/erlydtl"}]
+    #not forget change version to 'vsn,"0.12.1"' in deps/erlydtl/ebin after "mix deps.get"
+    {:erlydtl, "~> 0.12.1", override: true}]
   end
 end

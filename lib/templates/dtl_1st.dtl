@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <h1>Testing dtl template including template</h1>
+    <p>Welcome back, {{ name }}!</p>
+    <p>You have {{ friends|length }} friends: {{ friends|join:", " }}</p>
+    <p>
+      Have some primes:
+      {# this is exciting ж #}
+      {% for i in primes %}
+        <br>{{ i }}
+      {% endfor %}
+    </p>
+    {{ name2|safe }}
+  </body>
+</html>
