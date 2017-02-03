@@ -19,8 +19,8 @@ defmodule Iexfly.Routing do
   use Iexfly.Router
   import Iexfly.Gettext, only: [gettext: 1, gettext: 2]
   import Gettext, only: [put_locale: 2]
-  
-  require EEx # you have to require EEx before using its macros outside of functions
+  #alias Iexfly.Template, as: T
+  import Iexfly.Template
   
   def route("GET", [], conn) do
     IO.puts("GET /")
@@ -72,7 +72,6 @@ defmodule Iexfly.Routing do
 
   #get post form
   #/postcat/cat2?test1=777&test2=тест
-  EEx.function_from_file :defp, :template_getpost_cat, "lib/templates/getpost_cat.eex", [:cat_id]
   def route("GET", ["postcat", cat_id], conn) do
     IO.puts("GET /postcat/#{cat_id}")
     page_contents = template_getpost_cat(cat_id)
@@ -103,16 +102,13 @@ defmodule Iexfly.Routing do
   end
 
   #precompiling template(s)
-  EEx.function_from_file :defp, :template_show_dog, "lib/templates/show_dog.eex", [:dog_id]
   def route("GET", ["dog", dog_id], conn) do
     IO.puts("GET /dog/#{dog_id}")
     page_contents = template_show_dog(dog_id)
     conn |> Plug.Conn.put_resp_content_type("text/html") |> Plug.Conn.send_resp(200, page_contents)
   end
-  
+
   #template including template
-  EEx.function_from_file :defp, :template_twice_1st, "lib/templates/twice_1st.eex", [:first_id, :second_id, :second_part]
-  EEx.function_from_file :defp, :template_twice_2nd, "lib/templates/twice_2nd.eex", [:second_value]
   def route("GET", ["twice", second_id], conn) do
     IO.puts("GET /twice/#{second_id}")
     page_contents = template_twice_1st("test1", second_id, template_twice_2nd("test2 777"))
@@ -120,10 +116,6 @@ defmodule Iexfly.Routing do
   end
 
   #dtl template including template (erlydtl)
-  #:erlydtl.compile_file('lib/templates/dtl_1st.dtl', :dtl_1st, [{:out_dir, ['../deps/erlydtl/ebin']}])
-  :erlydtl.compile('lib/templates/dtl_1st.dtl', :dtl_1st, [])
-  :erlydtl.compile('lib/templates/dtl_2nd.dtl', :dtl_2nd, [{:auto_escape, :false}])
-  
   def route("GET", ["dtl"], conn) do
     IO.puts("GET /dtl")
     
