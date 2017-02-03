@@ -7,14 +7,16 @@ defmodule Iexfly.Mixfile do
      elixir: "~> 1.3",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
-     deps: deps()]
+     deps: deps(),
+     gettext: [{:compiler_po_wildcard, "gettext/*/LC_MESSAGES/*.po"}],
+     compilers: [:gettext] ++ Mix.compilers]
   end
 
   # Configuration for the OTP application
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger, :ecto, :cowboy, :plug]]
+    [applications: [:logger, :ecto, :cowboy, :plug, :gettext]]
   end
 
   # Dependencies can be Hex packages:
@@ -34,6 +36,7 @@ defmodule Iexfly.Mixfile do
     {:jazz, "~> 0.2.1"},
     #{:erlydtl, github: "erlydtl/erlydtl"}]
     #not forget change version to 'vsn,"0.12.1"' in deps/erlydtl/ebin after "mix deps.get"
-    {:erlydtl, "~> 0.12.1", override: true}]
+    {:erlydtl, "~> 0.12.1", override: true},
+    {:gettext, "~> 0.13.1"}]
   end
 end

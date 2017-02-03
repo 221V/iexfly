@@ -17,6 +17,8 @@ end
 defmodule Iexfly.Routing do
   import Plug.Conn
   use Iexfly.Router
+  import Iexfly.Gettext, only: [gettext: 1, gettext: 2]
+  import Gettext, only: [put_locale: 2]
   
   require EEx # you have to require EEx before using its macros outside of functions
   
@@ -163,6 +165,28 @@ defmodule Iexfly.Routing do
     page_contents = Integer.to_string(page_contents["uid"]) <> ": " <> name1 <> " " <> name2 <> "<br><img src=\""<> page_contents["photo_big"] <> "\"><br>"
     
     conn |> Plug.Conn.put_resp_content_type("text/html") |> send_resp(200, page_contents)
+  end
+
+  #gettext i18n test
+  def route("GET", ["gettext", lang], conn) do
+    IO.puts("GET /gettext/#{lang}")
+    
+    lang = case lang do
+      "en" -> "en"
+      "ru" -> "ru"
+      "ua" -> "ua"
+      _ -> "en"
+    end
+    put_locale(Iexfly.Gettext, lang)
+    
+    #gettext "Hello!"
+    #gettext("Hello!")
+    #gettext "Welcome to %{name}", name: "this demo!"
+    #{:safe, gettext "Welcome<br> to %{name}", name: "this demo!"}
+    hello_text = gettext "happy using gettext for you, my friend!"
+    
+    conn = Plug.Conn.put_resp_content_type(conn, "text/html")
+    conn |> send_resp(200, "You requested gettext demo<br>lang: #{lang},<br>#{hello_text}")
   end
 
   def route(method, path, conn) do
